@@ -9,7 +9,7 @@ mongoose
     console.log("Mongo is connected ");
   })
   .catch((err) => {
-    console.error("error en la coneccion de mongodb ", err);
+    console.error("MONGODB ERROR:", err);
   });
 
 mongoose.set("useCreateIndex", true);
