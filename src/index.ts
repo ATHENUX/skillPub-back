@@ -1,8 +1,8 @@
-import config from "./server/config";
+import config from "server/config";
 
 if (process.env.NODE_ENV !== "production") require("dotenv").config();
 
-import "./database/mongodb";
+import "database/mongodb";
 
 function main() {
   const app = new config(4000);
