@@ -10,7 +10,7 @@ const isLogged = async (req: Request, res: Response, next: NextFunction) => {
     return res.status(403).json({ message: "user is not login", success: false });
   }
 
-  await jwt.verify(auth, process.env.TOKENJWT!, function (err: JsonWebTokenError | NotBeforeError | TokenExpiredError | null, user: object | undefined): void {
+  jwt.verify(auth, process.env.TOKENJWT!, function (err: JsonWebTokenError | NotBeforeError | TokenExpiredError | null, user: object | undefined): void {
     if (err) {
       res.status(403).json({ message: "user is not login", success: false, err });
     } else {

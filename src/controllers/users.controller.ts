@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 
-class Access {
+class User {
   public login(req: Request, res: Response):Response {
     return res.json("hola desde el back");
   }
 }
 
-const access = new Access();
+const user = new User();
 
-export default access
+export default user
