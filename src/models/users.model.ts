@@ -24,7 +24,7 @@ const usersSchema = new Schema(
       type: String,
       required: [true, "Last name is required"],
     },
-    fistName: {
+    firstName: {
       type: String,
       required: [true, "Fist name is required"],
     },
