@@ -19,7 +19,7 @@ export default class config {
 
   private middlewares() {
     this.app.use(cors());
-    this.app.use(morgan("common"));
+    this.app.use(morgan("combined"));
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(express.json());
 
