@@ -2,7 +2,7 @@ import express, { Application } from "express";
 import morgan from "morgan";
 import cors from "cors";
 import path from "path";
-import router from "routes/router";
+import api from "routes/api";
 
 export default class config {
   private app: Application;
@@ -23,7 +23,7 @@ export default class config {
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(express.json());
 
-    router(this.app);
+    api(this.app);
 
     this.app.use(require("connect-history-api-fallback")());
     this.app.use(express.static(path.join(__dirname, "../public")));
