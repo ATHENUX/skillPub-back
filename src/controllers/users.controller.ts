@@ -38,7 +38,7 @@ class User {
 
     const token = createToken(user._id);
 
-    return res.json({ success: true, message: "Registered user", token });
+    return res.json({ success: true, message: "User registered", token });
   }
 
   public async assignAptitudes(req: Request, res: Response): Promise<Response> {

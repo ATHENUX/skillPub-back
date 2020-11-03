@@ -4,7 +4,7 @@ import { isLogged } from "middlewares/isLogged";
 
 //Controllers
 import user from "controllers/users.controller";
-import categories from "controllers/categoriess.controller";
+import categories from "controllers/category.controller";
 import aptitudes from "controllers/aptitudes.controller";
 
 const router: Router = Router();
