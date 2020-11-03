@@ -15,7 +15,7 @@ class User {
 
     const token = createToken(user._id);
 
-    return res.json({ success: true, message: "successfully", token });
+    return res.json({ success: true, message: "Successfully", token });
   }
 
   public async signUp(req: Request, res: Response): Promise<Response> {
@@ -35,10 +35,22 @@ class User {
 
     newUser.password = await newUser.encryptPassword(newUser.password);
     const user = await newUser.save();
-    
+
     const token = createToken(user._id);
 
-    return res.json({ success: true, message: "Registered user", token });
+    return res.json({ success: true, message: "User registered", token });
+  }
+
+  public async assignAptitudes(req: Request, res: Response): Promise<Response> {
+    const { listAptitudes } = req.body;
+    const decoded = (<any>req)["decoded"]._id;
+
+    try {
+      await Users.findOneAndUpdate({ _id: decoded._id }, { listOfAptitudes: listAptitudes });
+      return res.json({ success: true, message: "Successfully" });
+    } catch (error) {
+      return res.json({ success: false, error });
+    }
   }
 }
 
