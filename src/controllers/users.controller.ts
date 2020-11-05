@@ -10,6 +10,9 @@ class User {
 
     const { email, password } = req.body;
     const user: any = await Users.findOne({ email: email });
+    if (user == null) {
+      return res.json({success:false,message:"Email not found"})
+    }
     const verifyPassword = await user.matchPassword(password);
     if (!verifyPassword) return res.json({ success: false, message: "Incorrect password" });
 
