@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 import { createToken } from "helpers/assistant";
 import { OAuth2Client } from "google-auth-library";
+import fetch from "node-fetch";
 import Users from "models/users.model";
 
 const client = new OAuth2Client(
@@ -51,7 +52,7 @@ class User {
     return res.json({ success: true, message: "User registered", token });
   }
 
-  public async googleAccess(req: Request, res: Response) {
+  public async googleAccess(req: Request, res: Response): Promise<Response> {
     const { tokenId, validateAccess }: { tokenId: string; validateAccess: string } = req.body;
 
     try {
@@ -68,32 +69,77 @@ class User {
             const token = createToken(userFind._id);
             return res.json({ success: true, message: "User found", token });
           }
-          res.json({ success: false, message: "Email not found" });
-        } else {
-          if (userFind !== null) {
-            return res.json({ success: false, message: "Email is already registered" });
-          }
-          const password = email + Math.floor(Math.random() * (50 - 5)) + 5;
-
-          const newUser: any = new Users({
-            email,
-            password,
-            firstName: given_name,
-            lastName: family_name,
-            avatar: picture,
-          });
-
-          newUser.password = await newUser.encryptPassword(newUser.password);
-          const user = await newUser.save();
-          const token = createToken(user._id);
-
-          return res.json({ success: true, message: "User registered", token });
+          return res.json({ success: false, message: "Email not found" });
         }
+
+        if (userFind !== null) {
+          return res.json({ success: false, message: "Email is already registered" });
+        }
+        const password = email + Math.floor(Math.random() * (50 - 5)) + 5;
+
+        const newUser: any = new Users({
+          email,
+          password,
+          firstName: given_name,
+          lastName: family_name,
+          avatar: picture,
+        });
+
+        newUser.password = await newUser.encryptPassword(newUser.password);
+        const user = await newUser.save();
+        const token = createToken(user._id);
+
+        return res.json({ success: true, message: "User registered", token });
       } else {
-        res.json({ success: false, message: "Unverified email" });
+        return res.json({ success: false, message: "Unverified email" });
       }
     } catch (error) {
-      res.json({ success: false, error });
+      return res.json({ success: false, error });
+    }
+  }
+
+  public async facebookAccess(req: Request, res: Response): Promise<Response> {
+    const { userId, accessToken, validateAccess } = req.body;
+    const urlGraphFacebook = `https://graph.facebook.com/v3.3/${userId}/?fields=id,name,email&access_token=${accessToken}`;
+
+    try {
+      const response = await fetch(urlGraphFacebook, {
+        method: "GET",
+      });
+
+      const facebookResponse = await response.json();
+
+      const { email, name } = facebookResponse;
+
+      const userFind: any = await Users.findOne({ email: email });
+
+      if (validateAccess === "signIn") {
+        if (userFind !== null) {
+          const token = createToken(userFind._id);
+          return res.json({ success: true, message: "User found", token });
+        }
+        return res.json({ success: false, message: "Email not found" });
+      }
+
+      if (userFind !== null) {
+        return res.json({ success: false, message: "Email is already registered" });
+      }
+
+      const password = email + Math.floor(Math.random() * (50 - 5)) + 5;
+      const newUser: any = new Users({
+        email,
+        password,
+        firstName: name,
+        lastName: " ",
+      });
+
+      newUser.password = await newUser.encryptPassword(newUser.password);
+      const user = await newUser.save();
+      const token = createToken(user._id);
+
+      return res.json({ success: true, message: "User registered", token });
+    } catch (error) {
+      return res.json({ success: false, error });
     }
   }
 

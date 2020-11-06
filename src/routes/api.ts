@@ -30,6 +30,7 @@ function api(app: Application) {
     user.signUp
   );
   router.post("/googleAccess", user.googleAccess);
+  router.post("/facebookAccess", user.facebookAccess);
   router.post("/assignAptitudes", isLogged, user.assignAptitudes);
 
   //Categories
