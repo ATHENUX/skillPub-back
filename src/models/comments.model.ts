@@ -23,9 +23,9 @@ const commentsSchema = new Schema({
         type: Date,
         default: Date.now,
       },
-      replies:{
-        type:Schema.Types.ObjectId,
-        ref:"replies"
+      replies: {
+        type: Schema.Types.ObjectId,
+        ref: "replies",
       },
     },
   ],
