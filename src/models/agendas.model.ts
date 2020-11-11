@@ -6,18 +6,18 @@ const agendasSchema = new Schema({
       time: {
         type: Date,
       },
-      title:{
-        type:String,
+      title: {
+        type: String,
         maxlength: [40, "too big a title"],
       },
-      description:{
-        type:String,
+      description: {
+        type: String,
         maxlength: [60, "too big a description"],
       },
-      timestamp:{
-        type:Date,
-        default:Date.now
-      }
+      timestamp: {
+        type: Date,
+        default: Date.now,
+      },
     },
   ],
 });
