@@ -32,6 +32,7 @@ function api(app: Application) {
   router.post("/googleAccess", user.googleAccess);
   router.post("/facebookAccess", user.facebookAccess);
   router.post("/assignAptitudes", isLogged, user.assignAptitudes);
+  router.post("/validateAccessToken", user.validateAccessToken);
 
   //Categories
   router.get("/categories", categories.getCategories);
