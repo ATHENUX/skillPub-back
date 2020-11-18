@@ -4,7 +4,7 @@ import uniqued from "mongoose-unique-validator";
 
 const emailMatch = [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/, "Email is not valid"];
 
-const GenderValues = ["M", "F", ""];
+const GenderValues = ["M", "F", "Other"];
 
 const usersSchema = new Schema(
   {

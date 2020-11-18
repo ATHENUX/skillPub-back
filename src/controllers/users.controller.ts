@@ -157,18 +157,25 @@ class User {
     }
   }
 
-  public async validateAccessToken(req: Request, res: Response): Promise<Response> {
+  public validateAccessToken(req: Request, res: Response): Response {
     try {
       const { token } = req.body;
-      jwt.verify(token, process.env.TOKENJWT!, async function (
-        err: JsonWebTokenError | NotBeforeError | TokenExpiredError | null
-      ): Promise<void> {
-        if (err) {
-          res
-            .status(constants.httpCodes.forbidden)
-            .json({ message: "Error verifying token", success: false, err });
+      let err = false;
+      jwt.verify(token, process.env.TOKENJWT!, function (
+        error: JsonWebTokenError | NotBeforeError | TokenExpiredError | null
+      ) {
+        if (error) {
+          err = true;
         }
       });
+
+      if (err) {
+        return res.json({
+          message: "Error verifying token",
+          success: false,
+          status: constants.httpCodes.unauthorized,
+        });
+      }
       return res.json({ success: true, message: "Valid token" });
     } catch (error) {
       return res.json({ success: false, error });
