@@ -4,6 +4,8 @@ import { createToken } from "helpers/assistant";
 import { OAuth2Client } from "google-auth-library";
 import fetch from "node-fetch";
 import Users from "models/users.model";
+import jwt, { JsonWebTokenError, NotBeforeError, TokenExpiredError } from "jsonwebtoken";
+import { constants } from "helpers/constants";
 
 const client = new OAuth2Client(
   "920347174932-jom43a4j0cqa05rgjri2pvo0nrcogvhm.apps.googleusercontent.com"
@@ -150,6 +152,31 @@ class User {
     try {
       await Users.findOneAndUpdate({ _id: decoded._id }, { listOfAptitudes: listAptitudes });
       return res.json({ success: true, message: "Successfully" });
+    } catch (error) {
+      return res.json({ success: false, error });
+    }
+  }
+
+  public validateAccessToken(req: Request, res: Response): Response {
+    try {
+      const { token } = req.body;
+      let err = false;
+      jwt.verify(token, process.env.TOKENJWT!, function (
+        error: JsonWebTokenError | NotBeforeError | TokenExpiredError | null
+      ) {
+        if (error) {
+          err = true;
+        }
+      });
+
+      if (err) {
+        return res.json({
+          message: "Error verifying token",
+          success: false,
+          status: constants.httpCodes.unauthorized,
+        });
+      }
+      return res.json({ success: true, message: "Valid token" });
     } catch (error) {
       return res.json({ success: false, error });
     }
