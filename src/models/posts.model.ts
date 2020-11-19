@@ -24,11 +24,11 @@ const postsSchema = new Schema(
       },
     ],
     // -------  Republished --------
-    RepublishedValidation: {
+    republishedValidation: {
       type: Boolean,
       default: false,
     },
-    RepublishedBodyContent: {
+    republishedBodyContent: {
       type: String,
       maxlength: [60, "content body max"],
     },

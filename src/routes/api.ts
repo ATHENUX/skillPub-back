@@ -25,7 +25,6 @@ function api(app: Application) {
       check("email").not().isEmpty().withMessage("Email is required"),
       check("firstName").not().isEmpty().withMessage("First name is required"),
       check("lastName").not().isEmpty().withMessage("Last name is required"),
-      check("password").not().isEmpty().withMessage("password is required"),
     ],
     user.signUp
   );
@@ -33,6 +32,7 @@ function api(app: Application) {
   router.post("/facebookAccess", user.facebookAccess);
   router.post("/assignAptitudes", isLogged, user.assignAptitudes);
   router.post("/validateAccessToken", user.validateAccessToken);
+  router.post("/updateUserSettings",isLogged, user.updateUserSettings);
 
   //Categories
   router.get("/categories", categories.getCategories);

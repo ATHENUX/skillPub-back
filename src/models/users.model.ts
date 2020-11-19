@@ -36,10 +36,10 @@ const usersSchema = new Schema(
     phone: {
       type: String,
     },
-    DateOfBirth: {
+    dateOfBirth: {
       type: Date,
     },
-    Gender: {
+    gender: {
       type: String,
       enum: { values: GenderValues, massage: "option is not valid" },
     },
@@ -85,13 +85,13 @@ const usersSchema = new Schema(
         ref: "aptitudes",
       },
     ],
-    Follower: [
+    follower: [
       {
         type: Schema.Types.ObjectId,
         ref: "users",
       },
     ],
-    Following: [
+    following: [
       {
         type: Schema.Types.ObjectId,
         ref: "users",
