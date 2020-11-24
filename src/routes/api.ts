@@ -38,7 +38,7 @@ function api(app: Application) {
   router.get("/categories", categories.getCategories);
 
   //Aptitudes
-  router.get("/aptitudes", isLogged, aptitudes.getAptitudes);
+  router.post("/aptitudes", isLogged, aptitudes.getAptitudes);
 
   app.use("/api", router);
 }
