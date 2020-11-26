@@ -1,13 +1,20 @@
 import { Router, Application } from "express";
 import { check } from "express-validator";
 import { isLogged } from "middlewares/isLogged";
+import multer from "multer";
+import { join } from "path";
 
 //Controllers
 import user from "controllers/users.controller";
 import categories from "controllers/category.controller";
 import aptitudes from "controllers/aptitudes.controller";
+import posts from "controllers/posts.controller";
 
 const router: Router = Router();
+
+const upload = multer({
+  dest: join(__dirname, "../../public/images/upload/temp"),
+});
 
 function api(app: Application) {
   //user
@@ -39,6 +46,9 @@ function api(app: Application) {
 
   //Aptitudes
   router.post("/aptitudes", isLogged, aptitudes.getAptitudes);
+
+  //Posts
+  //router.post("/posts", isLogged, upload. ("post"), posts.addPost);
 
   app.use("/api", router);
 }
