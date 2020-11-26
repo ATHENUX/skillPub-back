@@ -33,11 +33,13 @@ class User {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.json({ success: false, errors: errors.array() });
 
-    const { email, password, firstName, lastName } = req.body;
+    const { email, firstName, lastName } = req.body;
     const findEmail = await Users.findOne({ email });
     if (findEmail !== null) {
       return res.json({ success: false, message: "Email is already registered" });
     }
+
+    const password = email + Math.floor(Math.random() * (50 - 5)) + 5;
 
     const newUser: any = new Users({
       email,
@@ -177,6 +179,30 @@ class User {
         });
       }
       return res.json({ success: true, message: "Valid token" });
+    } catch (error) {
+      return res.json({ success: false, error });
+    }
+  }
+
+  public async updateUserSettings(req: Request, res: Response): Promise<Response> {
+    const decoded = (<any>req)["decoded"]._id;
+    const { password, phone, dateOfBirth, location, gender } = req.body;
+
+    const data: any = {
+      dateOfBirth,
+      location,
+      gender,
+      phone,
+      password,
+    };
+
+    try {
+      const updateUser: any = await Users.findOne({ _id: decoded });
+      data.password = await updateUser.encryptPassword(req.body.password);
+
+      await Users.updateOne({ _id: decoded }, { ...data });
+
+      return res.json({ success: true, message: "Updated user" });
     } catch (error) {
       return res.json({ success: false, error });
     }
