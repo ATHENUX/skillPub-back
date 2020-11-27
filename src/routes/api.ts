@@ -2,7 +2,8 @@ import { Router, Application } from "express";
 import { check } from "express-validator";
 import { isLogged } from "middlewares/isLogged";
 import multer from "multer";
-import { join } from "path";
+
+import { storage } from "config/multerConfig";
 
 //Controllers
 import user from "controllers/users.controller";
@@ -11,10 +12,6 @@ import aptitudes from "controllers/aptitudes.controller";
 import posts from "controllers/posts.controller";
 
 const router: Router = Router();
-
-const upload = multer({
-  dest: join(__dirname, "../../public/images/upload/temp"),
-});
 
 function api(app: Application) {
   //user
@@ -39,7 +36,7 @@ function api(app: Application) {
   router.post("/facebookAccess", user.facebookAccess);
   router.post("/assignAptitudes", isLogged, user.assignAptitudes);
   router.post("/validateAccessToken", user.validateAccessToken);
-  router.post("/updateUserSettings",isLogged, user.updateUserSettings);
+  router.post("/updateUserSettings", isLogged, user.updateUserSettings);
 
   //Categories
   router.get("/categories", categories.getCategories);
@@ -48,7 +45,15 @@ function api(app: Application) {
   router.post("/aptitudes", isLogged, aptitudes.getAptitudes);
 
   //Posts
-  //router.post("/posts", isLogged, upload. ("post"), posts.addPost);
+  router.post(
+    "/posts",
+    isLogged,
+    multer({
+      storage: storage,
+    }).array("files", 5),
+    [check("bodyContent").not().isEmpty().withMessage("Body content is required")],
+    posts.addPost
+  );
 
   app.use("/api", router);
 }

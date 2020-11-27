@@ -163,13 +163,15 @@ class User {
     try {
       const { token } = req.body;
       let err = false;
-      jwt.verify(token, process.env.TOKENJWT!, function (
-        error: JsonWebTokenError | NotBeforeError | TokenExpiredError | null
-      ) {
-        if (error) {
-          err = true;
+      jwt.verify(
+        token,
+        process.env.TOKENJWT!,
+        function (error: JsonWebTokenError | NotBeforeError | TokenExpiredError | null) {
+          if (error) {
+            err = true;
+          }
         }
-      });
+      );
 
       if (err) {
         return res.json({
