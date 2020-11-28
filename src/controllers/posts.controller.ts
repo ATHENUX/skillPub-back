@@ -3,6 +3,7 @@ import { validationResult } from "express-validator";
 import cloudinary from "config/cloudinaryConfig";
 import Posts from "models/posts.model";
 import fse from "fs-extra";
+import path from "path";
 
 class Post {
   public async addPost(req: Request, res: Response): Promise<Response> {
@@ -10,8 +11,22 @@ class Post {
       const errors = validationResult(req);
       if (!errors.isEmpty()) return res.json({ success: false, errors: errors.array() });
 
-      if (req.files === undefined || req.files === null) {
+      if (!req.files.length) {
         return res.json({ success: false, message: "There are not files" });
+      }
+
+      let isValid = true;
+
+      for (const file of (<any>req).files) {
+        let ext: any = path.extname(file.originalname);
+        if (ext !== ".png" || ext !== ".jpg" || ext !== ".jpeg" || ext !== ".gif") {
+          isValid = false;
+          break;
+        }
+      }
+
+      if (!isValid) {
+        return res.json({ succes: false, message: "There's a file which extension is not valid" });
       }
 
       let imagePaths: any = (<any>req).files.map((file: any) => file.path);
