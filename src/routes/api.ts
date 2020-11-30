@@ -3,7 +3,7 @@ import { check } from "express-validator";
 import { isLogged } from "middlewares/isLogged";
 import multer from "multer";
 
-import { storage } from "config/multerConfig";
+import { storage } from "config/multer.config";
 
 //Controllers
 import user from "controllers/users.controller";
@@ -50,8 +50,8 @@ function api(app: Application) {
     isLogged,
     multer({
       storage: storage,
-    }).array("files", 5),
-    [check("bodyContent").not().isEmpty().withMessage("Body content is required")],
+    }).array("files[]", 5),
+    check("bodyContent").not().isEmpty().withMessage("Post body is required"),
     posts.addPost
   );
 

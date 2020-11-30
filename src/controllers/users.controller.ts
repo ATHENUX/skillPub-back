@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
-import { createToken } from "helpers/assistant";
+import { createToken } from "helpers/assistant.helpers";
 import { OAuth2Client } from "google-auth-library";
 import fetch from "node-fetch";
 import Users from "models/users.model";
