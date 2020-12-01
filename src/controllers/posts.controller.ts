@@ -15,6 +15,22 @@ class Post {
       let imagePaths: any = [];
 
       if (req.files.length > 0) {
+        imagePaths = (<any>req).files.map((file: any) => file.path);
+
+        let fileToLarge: Boolean = false;
+
+        for (const file of (<any>req).files) {
+          if (file.size > 1000000) {
+            fileToLarge = true;
+            break;
+          }
+        }
+
+        if (fileToLarge) {
+          removeFiles(imagePaths);
+          return res.json({ success: false, message: "File too large" });
+        }
+
         let isValid = true;
 
         for (const file of (<any>req).files) {
@@ -24,8 +40,6 @@ class Post {
             break;
           }
         }
-
-        imagePaths = (<any>req).files.map((file: any) => file.path);
 
         if (!isValid) {
           removeFiles(imagePaths);

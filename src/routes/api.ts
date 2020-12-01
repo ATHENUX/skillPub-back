@@ -5,6 +5,9 @@ import multer from "multer";
 
 import { storage } from "config/multer.config";
 
+//Constants
+import { constants } from "helpers/constants";
+
 //Controllers
 import user from "controllers/users.controller";
 import categories from "controllers/category.controller";
@@ -37,6 +40,7 @@ function api(app: Application) {
   router.post("/assignAptitudes", isLogged, user.assignAptitudes);
   router.post("/validateAccessToken", user.validateAccessToken);
   router.post("/updateUserSettings", isLogged, user.updateUserSettings);
+  router.put("/updatePostList", isLogged, user.assignPost);
 
   //Categories
   router.get("/categories", categories.getCategories);
@@ -50,7 +54,7 @@ function api(app: Application) {
     isLogged,
     multer({
       storage: storage,
-    }).array("files[]", 5),
+    }).array("files[]", constants.maximumFilesSupported),
     check("bodyContent").not().isEmpty().withMessage("Post body is required"),
     posts.addPost
   );
