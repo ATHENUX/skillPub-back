@@ -35,13 +35,16 @@ function api(app: Application) {
     ],
     user.signUp
   );
+  router.post("/getUser", isLogged, user.getUser);
   router.post("/googleAccess", user.googleAccess);
   router.post("/facebookAccess", user.facebookAccess);
   router.post("/assignAptitudes", isLogged, user.assignAptitudes);
   router.post("/validateAccessToken", user.validateAccessToken);
   router.post("/updateUserSettings", isLogged, user.updateUserSettings);
+  router.post("/follow", isLogged, user.follow);
+  router.post("/unfollow", isLogged, user.unfollow);
   router.put("/updatePostList", isLogged, user.assignPost);
-
+  
   //Categories
   router.get("/categories", categories.getCategories);
 

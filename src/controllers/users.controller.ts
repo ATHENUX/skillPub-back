@@ -12,6 +12,21 @@ const client = new OAuth2Client(
 );
 
 class User {
+  public async getUser(req: Request, res: Response): Promise<Response> {
+    const decoded = (<any>req)["decoded"];
+    const { id } = req.body;
+
+    if (id) {
+      try {
+        const user = await Users.findOne({ _id: id }).populate("listOfAptitudes");
+        return res.json({ success: true, user });
+      } catch (error) {
+        return res.json({ success: false, error });
+      }
+    }
+    return res.json({ success: true, user: decoded });
+  }
+
   public async signIn(req: Request, res: Response): Promise<Response> {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.json({ success: false, errors: errors.array() });
@@ -210,6 +225,38 @@ class User {
     }
   }
 
+  public async follow(req: Request, res: Response): Promise<Response> {
+    const decoded = (<any>req)["decoded"];
+    const { id } = req.body;
+
+    try {
+      //This request will add the id of the user who was followed
+      await Users.updateOne({ _id: decoded._id }, { $push: { following: id } });
+      //while this one is going to add to the user its new follower
+      await Users.updateOne({ _id: id }, { $push: { follower: decoded._id } });
+
+      return res.json({ success: true, message: "Successfully" });
+    } catch (error) {
+      return res.json({ success: false, message: "Error could not add followers" });
+    }
+  }
+
+  public async unfollow(req: Request, res: Response): Promise<Response> {
+    const decoded = (<any>req)["decoded"];
+    const { id } = req.body;
+
+    try {
+      //This request will remove the identification of the user who was followed
+      await Users.updateOne({ _id: decoded._id }, { $pull: { following: id } });
+      //while this will delete the user his old follower
+      await Users.updateOne({ _id: id }, { $pull: { follower: decoded._id } });
+
+      return res.json({ success: true, message: "Successfully" });
+    } catch (error) {
+      return res.json({ success: false, message: "Error could not add followers" });
+    }  
+  }  
+      
   public async assignPost(req: Request, res: Response): Promise<Response> {
     const decoded = (<any>req)["decoded"]._id;
     const { _id } = req.body;
