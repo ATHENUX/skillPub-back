@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
-import { createToken } from "helpers/assistant";
+import { createToken } from "helpers/assistant.helpers";
 import { OAuth2Client } from "google-auth-library";
 import fetch from "node-fetch";
 import Users from "models/users.model";
@@ -254,6 +254,17 @@ class User {
       return res.json({ success: true, message: "Successfully" });
     } catch (error) {
       return res.json({ success: false, message: "Error could not add followers" });
+    }  
+  }  
+      
+  public async assignPost(req: Request, res: Response): Promise<Response> {
+    const decoded = (<any>req)["decoded"]._id;
+    const { _id } = req.body;
+    try {
+      await Users.updateOne({ _id: decoded }, { $push: { postsList: _id } });
+      return res.json({ success: true, message: "Pushed post list" });
+    } catch (error) {
+      return res.json({ success: false, error });
     }
   }
 }
