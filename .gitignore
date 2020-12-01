@@ -46,6 +46,9 @@ build/src
 node_modules/
 jspm_packages/
 
+# Public directory
+src/public/*
+
 # TypeScript v1 declaration files
 typings/
 

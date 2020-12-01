@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
-import { createToken } from "helpers/assistant";
+import { createToken } from "helpers/assistant.helpers";
 import { OAuth2Client } from "google-auth-library";
 import fetch from "node-fetch";
 import Users from "models/users.model";
@@ -163,13 +163,15 @@ class User {
     try {
       const { token } = req.body;
       let err = false;
-      jwt.verify(token, process.env.TOKENJWT!, function (
-        error: JsonWebTokenError | NotBeforeError | TokenExpiredError | null
-      ) {
-        if (error) {
-          err = true;
+      jwt.verify(
+        token,
+        process.env.TOKENJWT!,
+        function (error: JsonWebTokenError | NotBeforeError | TokenExpiredError | null) {
+          if (error) {
+            err = true;
+          }
         }
-      });
+      );
 
       if (err) {
         return res.json({
@@ -203,6 +205,17 @@ class User {
       await Users.updateOne({ _id: decoded }, { ...data });
 
       return res.json({ success: true, message: "Updated user" });
+    } catch (error) {
+      return res.json({ success: false, error });
+    }
+  }
+
+  public async assignPost(req: Request, res: Response): Promise<Response> {
+    const decoded = (<any>req)["decoded"]._id;
+    const { _id } = req.body;
+    try {
+      await Users.updateOne({ _id: decoded }, { $push: { postsList: _id } });
+      return res.json({ success: true, message: "Pushed post list" });
     } catch (error) {
       return res.json({ success: false, error });
     }
