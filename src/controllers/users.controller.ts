@@ -225,6 +225,21 @@ class User {
     }
   }
 
+  public async updateUserState(req: Request, res: Response): Promise<Response> {
+    const decoded = (<any>req)["decoded"]._id;
+    try {
+      const user: any = await Users.findOneAndUpdate(
+        { _id: decoded },
+        { state: "settings completed" },
+        { new: true }
+      );
+
+      return res.json({ success: true, message: "User state updated", user });
+    } catch (error) {
+      return res.json({ success: false, error });
+    }
+  }
+
   public async follow(req: Request, res: Response): Promise<Response> {
     const decoded = (<any>req)["decoded"];
     const { id } = req.body;
@@ -254,9 +269,9 @@ class User {
       return res.json({ success: true, message: "Successfully" });
     } catch (error) {
       return res.json({ success: false, message: "Error could not add followers" });
-    }  
-  }  
-      
+    }
+  }
+
   public async assignPost(req: Request, res: Response): Promise<Response> {
     const decoded = (<any>req)["decoded"]._id;
     const { _id } = req.body;

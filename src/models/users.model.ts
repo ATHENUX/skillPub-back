@@ -97,6 +97,10 @@ const usersSchema = new Schema(
         ref: "users",
       },
     ],
+    state: {
+      type: String,
+      default: "missing settings",
+    },
   },
   {
     timestamps: true,
