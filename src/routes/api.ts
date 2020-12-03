@@ -41,10 +41,11 @@ function api(app: Application) {
   router.post("/assignAptitudes", isLogged, user.assignAptitudes);
   router.post("/validateAccessToken", user.validateAccessToken);
   router.post("/updateUserSettings", isLogged, user.updateUserSettings);
+  router.put("/updateUserState", isLogged, user.updateUserState);
   router.post("/follow", isLogged, user.follow);
   router.post("/unfollow", isLogged, user.unfollow);
   router.put("/updatePostList", isLogged, user.assignPost);
-  
+
   //Categories
   router.get("/categories", categories.getCategories);
 
