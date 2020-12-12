@@ -2,6 +2,10 @@ import { Schema, model } from "mongoose";
 
 const postsSchema = new Schema(
   {
+    userId: {
+      type: Schema.Types.ObjectId,
+      res: "users",
+    },
     bodyContent: {
       type: String,
       maxlength: [60, "content body max"],
@@ -23,6 +27,12 @@ const postsSchema = new Schema(
         ref: "comments",
       },
     ],
+    favorites: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "users",
+      },
+    ],
     // -------  Republished --------
     republishedValidation: {
       type: Boolean,
@@ -31,6 +41,10 @@ const postsSchema = new Schema(
     republishedBodyContent: {
       type: String,
       maxlength: [60, "content body max"],
+    },
+    republishedUserId: {
+      type: Schema.Types.ObjectId,
+      ref: "users",
     },
     republishedUsersId: [
       {

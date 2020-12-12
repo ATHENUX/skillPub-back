@@ -55,12 +55,6 @@ const usersSchema = new Schema(
       type: String,
       maxlength: [60, "too big a description"],
     },
-    postsList: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "posts",
-      },
-    ],
     savedposts: [
       {
         type: Schema.Types.ObjectId,

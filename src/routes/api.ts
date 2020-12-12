@@ -44,7 +44,6 @@ function api(app: Application) {
   router.put("/updateUserState", isLogged, user.updateUserState);
   router.post("/follow", isLogged, user.follow);
   router.post("/unfollow", isLogged, user.unfollow);
-  router.put("/updatePostList", isLogged, user.assignPost);
 
   //Categories
   router.get("/categories", categories.getCategories);
@@ -62,6 +61,8 @@ function api(app: Application) {
     check("bodyContent").not().isEmpty().withMessage("Post body is required"),
     posts.addPost
   );
+  router.post("/getPostsProfile", isLogged, posts.getPostsProfile);
+  router.post("/republishPost", isLogged, posts.republishPost);
 
   app.use("/api", router);
 }
