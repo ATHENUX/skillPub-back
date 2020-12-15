@@ -277,7 +277,7 @@ class User {
     try {
       const users: any = await Users.find(
         { firstName: { $regex: `.*${name}.*` } },
-        "firstName lastName avatar"
+        "firstName lastName avatar _id"
       );
       return res.json({ success: true, users });
     } catch (error) {
