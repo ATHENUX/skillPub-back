@@ -272,17 +272,6 @@ class User {
     }
   }
 
-  public async assignPost(req: Request, res: Response): Promise<Response> {
-    const decoded = (<any>req)["decoded"]._id;
-    const { _id } = req.body;
-    try {
-      await Users.updateOne({ _id: decoded }, { $push: { postsList: _id } });
-      return res.json({ success: true, message: "Pushed post list" });
-    } catch (error) {
-      return res.json({ success: false, error });
-    }
-  }
-
   public async searchUserByName(req: Request, res: Response): Promise<Response> {
     const { name } = req.body;
     try {
