@@ -44,6 +44,7 @@ function api(app: Application) {
   router.put("/updateUserState", isLogged, user.updateUserState);
   router.post("/follow", isLogged, user.follow);
   router.post("/unfollow", isLogged, user.unfollow);
+  router.post("/searchByUser", user.searchUserByName);
 
   //Categories
   router.get("/categories", categories.getCategories);

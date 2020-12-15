@@ -271,6 +271,19 @@ class User {
       return res.json({ success: false, message: "Error could not add followers" });
     }
   }
+
+  public async searchUserByName(req: Request, res: Response): Promise<Response> {
+    const { name } = req.body;
+    try {
+      const users: any = await Users.find(
+        { firstName: { $regex: `.*${name}.*` } },
+        "firstName lastName avatar _id"
+      );
+      return res.json({ success: true, users });
+    } catch (error) {
+      return res.json({ success: false, error });
+    }
+  }
 }
 
 const user = new User();
