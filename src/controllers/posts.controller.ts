@@ -93,9 +93,9 @@ class Post {
     const { id } = req.body;
     try {
       const count = await Posts.find({ userId: id }).count();
-      return res.json({ succes: true, count });
+      return res.json({ success: true, count });
     } catch (error) {
-      return res.json({ succes: false, error });
+      return res.json({ success: false, error });
     }
   }
 
@@ -137,10 +137,10 @@ class Post {
 
         return res.json({ success: true, message: "Republished post" });
       } else {
-        return res.json({ succes: false, message: "Already published" });
+        return res.json({ success: false, message: "Already published" });
       }
     } catch (error) {
-      return res.json({ succes: false, error });
+      return res.json({ success: false, error });
     }
   }
 }
