@@ -4,9 +4,9 @@ import cloudinary from "config/cloudinary.config";
 import Posts from "models/posts.model";
 import path from "path";
 import { removeFiles } from "helpers/assistant.helpers";
-
 class Post {
   public async addPost(req: Request, res: Response): Promise<Response> {
+    const decoded = (<any>req)["decoded"]._id;
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) return res.json({ success: false, errors: errors.array() });
@@ -57,7 +57,6 @@ class Post {
             },
             (err: any, result: any) => {
               let public_url: any = result.url;
-              console.log(public_url);
               uploadedResponses.push(public_url);
             }
           );
@@ -71,11 +70,13 @@ class Post {
       if (uploadedResponses.length > 0) {
         newPost = new Posts({
           bodyContent,
+          userId: decoded,
           thumbnailsList: uploadedResponses,
         });
       } else {
         newPost = newPost({
           bodyContent,
+          userId: decoded,
         });
       }
 
@@ -83,6 +84,61 @@ class Post {
       removeFiles(imagePaths);
 
       return res.json({ success: true, message: "Post created", post });
+    } catch (error) {
+      return res.json({ success: false, error });
+    }
+  }
+
+  public async countPosts(req: Request, res: Response): Promise<Response> {
+    const { id } = req.body;
+    try {
+      const count = await Posts.find({ userId: id }).count();
+      return res.json({ success: true, count });
+    } catch (error) {
+      return res.json({ success: false, error });
+    }
+  }
+
+  public async getPostsProfile(req: Request, res: Response): Promise<Response> {
+    const { id, limit } = req.body;
+    try {
+      const posts = await Posts.find({ userId: id })
+        .populate("republishedUserId")
+        .sort({ createdAt: -1 })
+        .limit(limit);
+
+      return res.json({ success: true, posts });
+    } catch (error) {
+      return res.json({ success: false, error });
+    }
+  }
+
+  public async republishPost(req: Request, res: Response): Promise<Response> {
+    const { share, republishedIds } = req.body;
+
+    try {
+      const findUserInPost: any = await Posts.findOne({ _id: republishedIds.postId });
+
+      const findUser = findUserInPost.republishedUsersId.find((id: String) => {
+        return id == republishedIds.userId;
+      });
+
+      if (findUser === undefined) {
+        const post = new Posts({
+          ...share,
+        });
+
+        await post.save();
+
+        await Posts.updateOne(
+          { _id: republishedIds.postId },
+          { $push: { republishedUsersId: republishedIds.userId } }
+        );
+
+        return res.json({ success: true, message: "Republished post" });
+      } else {
+        return res.json({ success: false, message: "Already published" });
+      }
     } catch (error) {
       return res.json({ success: false, error });
     }
