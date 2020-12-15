@@ -4,7 +4,6 @@ import cloudinary from "config/cloudinary.config";
 import Posts from "models/posts.model";
 import path from "path";
 import { removeFiles } from "helpers/assistant.helpers";
-
 class Post {
   public async addPost(req: Request, res: Response): Promise<Response> {
     const decoded = (<any>req)["decoded"]._id;
@@ -90,12 +89,24 @@ class Post {
     }
   }
 
-  public async getPostsProfile(req: Request, res: Response): Promise<Response> {
+  public async countPosts(req: Request, res: Response): Promise<Response> {
     const { id } = req.body;
+    try {
+      const count = await Posts.find({ userId: id }).count();
+      return res.json({ succes: true, count });
+    } catch (error) {
+      return res.json({ succes: false, error });
+    }
+  }
+
+  public async getPostsProfile(req: Request, res: Response): Promise<Response> {
+    const { id, limit } = req.body;
     try {
       const posts = await Posts.find({ userId: id })
         .populate("republishedUserId")
-        .sort({ createdAt: -1 });
+        .sort({ createdAt: -1 })
+        .limit(limit);
+
       return res.json({ success: true, posts });
     } catch (error) {
       return res.json({ success: false, error });

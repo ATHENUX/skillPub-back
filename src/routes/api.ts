@@ -63,6 +63,7 @@ function api(app: Application) {
   );
   router.post("/getPostsProfile", isLogged, posts.getPostsProfile);
   router.post("/republishPost", isLogged, posts.republishPost);
+  router.post("/countPosts", isLogged, posts.countPosts);
 
   app.use("/api", router);
 }
