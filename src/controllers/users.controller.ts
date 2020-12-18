@@ -225,6 +225,23 @@ class User {
     }
   }
 
+  public async accountSettings(req: Request, res: Response) {
+    const decoded = (<any>req)["decoded"]._id;
+    const { dateOfBirth, email, gender } = req.body;
+
+    if (email === "") {
+      return res.json({ success: false, message: "Email is required" });
+    }
+
+    try {
+      await Users.updateOne({ _id: decoded }, { dateOfBirth, email, gender });
+
+      return res.json({ success: true, message: "Updated user" });
+    } catch (error) {
+      return res.json({ success: false, error });
+    }
+  }
+
   public async updateUserState(req: Request, res: Response): Promise<Response> {
     const decoded = (<any>req)["decoded"]._id;
     try {
