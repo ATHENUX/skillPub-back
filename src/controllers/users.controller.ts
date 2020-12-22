@@ -301,6 +301,29 @@ class User {
       return res.json({ success: false, error });
     }
   }
+
+  public async changePassword(req: Request, res: Response): Promise<Response> {
+    const decoded = (<any>req)["decoded"]._id;
+    const { currentPassword, newPassword, repeatNewPassword } = req.body;
+
+    try {
+      const user: any = await Users.findOne({ _id: decoded });
+
+      const verifyPassword = await user.matchPassword(currentPassword);
+
+      if (verifyPassword) {
+        if (newPassword === repeatNewPassword) {
+          const password = await user.encryptPassword(newPassword);
+          await Users.updateOne({ _id: decoded }, { password });
+          return res.json({ success: true });
+        }
+        return res.json({ success: false, message: "New password is not valid" });
+      }
+      return res.json({ success: false, message: "The current password is incorrect" });
+    } catch (error) {
+      return res.json({ success: false, message: "Internal server error" });
+    }
+  }
 }
 
 const user = new User();
