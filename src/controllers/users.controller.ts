@@ -6,6 +6,7 @@ import fetch from "node-fetch";
 import Users from "models/users.model";
 import jwt, { JsonWebTokenError, NotBeforeError, TokenExpiredError } from "jsonwebtoken";
 import { constants } from "helpers/constants";
+import nodemailer from "nodemailer";
 
 const client = new OAuth2Client(
   "920347174932-jom43a4j0cqa05rgjri2pvo0nrcogvhm.apps.googleusercontent.com"
@@ -38,7 +39,9 @@ class User {
     }
     const verifyPassword = await user.matchPassword(password);
     if (!verifyPassword) return res.json({ success: false, message: "Incorrect password" });
-
+    if (user.state === constants.userState.recoverPassword) {
+      await Users.updateOne({ _id: user._id }, { state: constants.userState.settingsCompleted });
+    }
     const token = createToken(user._id);
 
     return res.json({ success: true, message: "Successfully", token });
@@ -247,7 +250,7 @@ class User {
     try {
       const user: any = await Users.findOneAndUpdate(
         { _id: decoded },
-        { state: "settings completed" },
+        { state: constants.userState.settingsCompleted },
         { new: true }
       );
 
@@ -322,6 +325,68 @@ class User {
       return res.json({ success: false, message: "The current password is incorrect" });
     } catch (error) {
       return res.json({ success: false, message: "Internal server error" });
+    }
+  }
+
+  public async sendEmail(req: Request, res: Response): Promise<Response> {
+    const { email } = req.body;
+    const user = await Users.findOne({ email });
+
+    if (user !== null) {
+      await Users.updateOne({ _id: user._id }, { state: constants.userState.recoverPassword });
+      const contentHTML = `
+        <h1>Reset your password</h1>
+
+        <p>If you requested a password reset for <strong>  ${email} </Strong>, use the link below to complete the process. If you did not request this, you can ignore this email.</p>
+
+        <a href="http://localhost:3000/recoverpassword/${user._id}" target="_blank">Change Password</a>
+      `;
+
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: process.env.USER_EMAIL,
+          pass: process.env.USER_PASS,
+        },
+      });
+
+      const info = await transporter.sendMail({
+        from: "'SkillPub server' <athenuxs@gmail.com> ",
+        to: email,
+        subject: `Password recovery`,
+        html: contentHTML,
+      });
+      return res.json({ success: true, info });
+    }
+    return res.json({ succes: false, message: "Email not found" });
+  }
+
+  public async validateUserId(req: Request, res: Response): Promise<Response> {
+    const { id } = req.body;
+
+    try {
+      const user = await Users.findOne({ _id: id });
+      return res.json({ success: true, user });
+    } catch (error) {
+      return res.json({ success: false, error });
+    }
+  }
+
+  public async modifyRecoverPassword(req: Request, res: Response): Promise<Response> {
+    const { pass, id } = req.body;
+
+    try {
+      const user: any = await Users.findOne({ _id: id });
+
+      const password = await user.encryptPassword(pass);
+      await Users.updateOne(
+        { _id: id },
+        { password, state: constants.userState.settingsCompleted }
+      );
+
+      return res.json({ success: true });
+    } catch (error) {
+      return res.json({ success: false, error });
     }
   }
 }
