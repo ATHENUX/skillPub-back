@@ -1,6 +1,7 @@
 import { Schema, model } from "mongoose";
 import bcrypt from "bcryptjs";
 import uniqued from "mongoose-unique-validator";
+import { constants } from "helpers/constants";
 
 const emailMatch = [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/, "Email is not valid"];
 
@@ -93,7 +94,7 @@ const usersSchema = new Schema(
     ],
     state: {
       type: String,
-      default: "missing settings",
+      default: constants.userState.missingSettings,
     },
   },
   {

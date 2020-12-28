@@ -21,4 +21,9 @@ export const constants = {
     networkExtended: 599,
   },
   maximumFilesSupported: 5,
+  userState: {
+    missingSettings: "missing settings",
+    settingsCompleted: "settings completed",
+    recoverPassword: "recover password",
+  },
 };
