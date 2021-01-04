@@ -45,6 +45,23 @@ function api(app: Application) {
   router.post("/follow", isLogged, user.follow);
   router.post("/unfollow", isLogged, user.unfollow);
   router.post("/searchByUser", user.searchUserByName);
+  router.put(
+    "/updateBanner",
+    isLogged,
+    multer({
+      storage: storage,
+    }).single("banner"),
+    user.updateBanner
+  );
+  router.put(
+    "/updateProfilePhoto",
+    isLogged,
+    multer({
+      storage: storage,
+    }).single("profilePhoto"),
+    user.updateProfilePhoto
+  );
+  router.put("/updateMainInfo", isLogged, user.updateMainInfo);
 
   //Categories
   router.get("/categories", categories.getCategories);

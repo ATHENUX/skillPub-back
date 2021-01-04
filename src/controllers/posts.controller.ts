@@ -14,7 +14,10 @@ class Post {
       let uploadedResponses: any = [];
       let imagePaths: any = [];
 
+      console.log(req.files.length);
+
       if (req.files.length > 0) {
+        console.log("entro");
         imagePaths = (<any>req).files.map((file: any) => file.path);
 
         let fileToLarge: Boolean = false;
@@ -56,8 +59,9 @@ class Post {
               upload_preset: "dev_setups",
             },
             (err: any, result: any) => {
-              let public_url: any = result.url;
-              uploadedResponses.push(public_url);
+              let publicId: any = result.public_id;
+              console.log(result);
+              uploadedResponses.push(publicId);
             }
           );
         }
@@ -74,14 +78,16 @@ class Post {
           thumbnailsList: uploadedResponses,
         });
       } else {
-        newPost = newPost({
+        newPost = new Posts({
           bodyContent,
           userId: decoded,
         });
       }
 
       const post: any = await newPost.save();
-      removeFiles(imagePaths);
+      if (imagePaths.length > 0) {
+        removeFiles(imagePaths);
+      }
 
       return res.json({ success: true, message: "Post created", post });
     } catch (error) {
