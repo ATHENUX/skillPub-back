@@ -27,7 +27,8 @@
     "mongoose-unique-validator": "^2.0.3",
     "morgan": "^1.10.0",
     "multer": "^1.4.2",
-    "node-fetch": "^2.6.1"
+    "node-fetch": "^2.6.1",
+    "nodemailer": "^6.4.17"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
@@ -40,6 +41,7 @@
     "@types/morgan": "^1.9.1",
     "@types/multer": "^1.4.4",
     "@types/node-fetch": "^2.5.7",
+    "@types/nodemailer": "^6.4.0",
     "dotenv": "^8.2.0",
     "nodemon": "^2.0.4",
     "ts-node": "^9.0.0",
