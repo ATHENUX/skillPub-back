@@ -14,10 +14,7 @@ class Post {
       let uploadedResponses: any = [];
       let imagePaths: any = [];
 
-      console.log(req.files.length);
-
       if (req.files.length > 0) {
-        console.log("entro");
         imagePaths = (<any>req).files.map((file: any) => file.path);
 
         let fileToLarge: Boolean = false;
@@ -60,7 +57,6 @@ class Post {
             },
             (err: any, result: any) => {
               let publicId: any = result.public_id;
-              console.log(result);
               uploadedResponses.push(publicId);
             }
           );
