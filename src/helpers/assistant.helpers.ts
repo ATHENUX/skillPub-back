@@ -23,3 +23,12 @@ export const removeFiles = (imagePaths: Array<any>) => {
     });
   }
 };
+
+export const removeFile = (imagePath: any) => {
+  fse.remove(imagePath, (err: any) => {
+    if (err) {
+      return console.log(err);
+    }
+    console.log(`${imagePath} has been removed succesfully`);
+  });
+};

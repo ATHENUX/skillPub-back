@@ -7,6 +7,9 @@ import Users from "models/users.model";
 import jwt, { JsonWebTokenError, NotBeforeError, TokenExpiredError } from "jsonwebtoken";
 import { constants } from "helpers/constants";
 import nodemailer from "nodemailer";
+import cloudinary from "config/cloudinary.config";
+import { removeFile } from "helpers/assistant.helpers";
+import path from "path";
 
 const client = new OAuth2Client(
   "920347174932-jom43a4j0cqa05rgjri2pvo0nrcogvhm.apps.googleusercontent.com"
@@ -367,6 +370,165 @@ class User {
     try {
       const user = await Users.findOne({ _id: id });
       return res.json({ success: true, user });
+    } catch (error) {
+      return res.json({ success: false, error });
+    }
+  }
+
+  public async updateBanner(req: Request, res: Response): Promise<Response> {
+    const decoded = (<any>req)["decoded"]._id;
+    try {
+      if (req.file.size > 1000000) {
+        removeFile(req.file.path);
+        return res.json({ success: false, message: "File too large" });
+      }
+      let ext: any = path.extname(req.file.originalname);
+      if (ext !== ".jpg" && ext !== ".jpeg" && ext !== ".png") {
+        removeFile(req.file.path);
+        return res.json({ success: false, message: "Invalid extension" });
+      }
+      const user: any = await Users.findById(decoded);
+      let publicId: any;
+      if (user.banner === undefined || user.banner === null) {
+        await cloudinary.uploader.upload(
+          req.file.path,
+          { upload_preset: "dev_setups" },
+          (err: any, result: any) => {
+            publicId = result.public_id;
+          }
+        );
+        const userUpdated = await Users.findOneAndUpdate(
+          { _id: decoded },
+          { banner: publicId },
+          { new: true }
+        );
+        removeFile(req.file.path);
+        return res.json({ success: true, message: "Successfully added banner", userUpdated });
+      } else {
+        const cloudRes = await cloudinary.uploader.destroy(
+          user.banner,
+          (error: any, result: any) => {
+            console.log(result, error);
+          }
+        );
+        if (cloudRes.result === "ok") {
+          await cloudinary.uploader.upload(
+            req.file.path,
+            { upload_preset: "dev_setups" },
+            (err: any, result: any) => {
+              publicId = result.public_id;
+            }
+          );
+          const userUpdated = await Users.findOneAndUpdate(
+            { _id: decoded },
+            { banner: publicId },
+            { new: true }
+          );
+          removeFile(req.file.path);
+          return res.json({ success: true, message: "Successfully updated banner", userUpdated });
+        } else {
+          removeFile(req.file.path);
+          return res.json({ success: false, message: "Error while uploading image to cloudinary" });
+        }
+      }
+    } catch (error) {
+      removeFile(req.file.path);
+      return res.json({ success: false, error });
+    }
+  }
+
+  public async updateProfilePhoto(req: Request, res: Response): Promise<Response> {
+    const decoded = (<any>req)["decoded"];
+    try {
+      console.log(req.file);
+      if (req.file.size > 1000000) {
+        removeFile(req.file.path);
+        return res.json({ success: false, message: "File too large" });
+      }
+      let ext: any = path.extname(req.file.originalname);
+      if (ext !== ".jpg" && ext !== ".jpeg" && ext !== ".png") {
+        removeFile(req.file.path);
+        return res.json({ success: false, message: "Invalid extension" });
+      }
+      const user: any = await Users.findById(decoded);
+      let publicId: any;
+      if (user.avatar === undefined || user.avatar === null) {
+        await cloudinary.uploader.upload(
+          req.file.path,
+          { upload_preset: "dev_setups" },
+          (err: any, result: any) => {
+            publicId = result.public_id;
+          }
+        );
+        const userUpdated = await Users.findOneAndUpdate(
+          { _id: decoded },
+          { avatar: publicId },
+          { new: true }
+        );
+        removeFile(req.file.path);
+        return res.json({ success: true, message: "Successfully added avatar", userUpdated });
+      } else {
+        if (user.avatar.includes("development/")) {
+          const cloudRes = await cloudinary.uploader.destroy(
+            user.avatar,
+            (error: any, result: any) => {
+              console.log(result, error);
+            }
+          );
+          if (cloudRes.result === "ok") {
+            await cloudinary.uploader.upload(
+              req.file.path,
+              { upload_preset: "dev_setups" },
+              (err: any, result: any) => {
+                publicId = result.public_id;
+              }
+            );
+            const userUpdated = await Users.findOneAndUpdate(
+              { _id: decoded },
+              { banner: publicId },
+              { new: true }
+            );
+            removeFile(req.file.path);
+            return res.json({
+              success: true,
+              message: "Successfully updated profile photo",
+              userUpdated,
+            });
+          } else {
+            removeFile(req.file.path);
+            return res.json({
+              success: false,
+              message: "Error while uploading image to cloudinary",
+            });
+          }
+        } else {
+          removeFile(req.file.path);
+          return res.json({
+            success: false,
+            message: "Profile picture taken either from Google or Facebook",
+          });
+        }
+      }
+    } catch (error) {
+      return res.json({ success: false, error });
+    }
+  }
+
+  public async updateMainInfo(req: Request, res: Response): Promise<Response> {
+    const decoded = (<any>req)["decoded"]._id;
+    const { firstName, lastName, description, phone } = req.body;
+    try {
+      const userUpdated = await Users.findOneAndUpdate(
+        { _id: decoded },
+        {
+          firstName,
+          lastName,
+          description,
+          phone,
+        },
+        { new: true }
+      );
+      return res.json({ success: true, message: "Main info updated", userUpdated });
     } catch (error) {
       return res.json({ success: false, error });
     }

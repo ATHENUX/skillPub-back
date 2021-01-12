@@ -56,8 +56,8 @@ class Post {
               upload_preset: "dev_setups",
             },
             (err: any, result: any) => {
-              let public_url: any = result.url;
-              uploadedResponses.push(public_url);
+              let publicId: any = result.public_id;
+              uploadedResponses.push(publicId);
             }
           );
         }
@@ -74,14 +74,16 @@ class Post {
           thumbnailsList: uploadedResponses,
         });
       } else {
-        newPost = newPost({
+        newPost = new Posts({
           bodyContent,
           userId: decoded,
         });
       }
 
       const post: any = await newPost.save();
-      removeFiles(imagePaths);
+      if (imagePaths.length > 0) {
+        removeFiles(imagePaths);
+      }
 
       return res.json({ success: true, message: "Post created", post });
     } catch (error) {

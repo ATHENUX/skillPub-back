@@ -50,6 +50,23 @@ function api(app: Application) {
   router.post("/sendEmail", user.sendEmail);
   router.post("/validateUser", user.validateUserId);
   router.post("/modifyRecoverPassword", user.modifyRecoverPassword);
+  router.put(
+    "/updateBanner",
+    isLogged,
+    multer({
+      storage: storage,
+    }).single("banner"),
+    user.updateBanner
+  );
+  router.put(
+    "/updateProfilePhoto",
+    isLogged,
+    multer({
+      storage: storage,
+    }).single("profilePhoto"),
+    user.updateProfilePhoto
+  );
+  router.put("/updateMainInfo", isLogged, user.updateMainInfo);
 
   //Categories
   router.get("/categories", categories.getCategories);
