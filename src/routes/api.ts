@@ -87,6 +87,9 @@ function api(app: Application) {
   router.post("/getPostsProfile", isLogged, posts.getPostsProfile);
   router.post("/republishPost", isLogged, posts.republishPost);
   router.post("/countPosts", isLogged, posts.countPosts);
+  router.post("/getPostsHome", isLogged, posts.getPostsHome);
+  router.post("/likePost", isLogged, posts.likePost);
+  router.post("/dislikePost", isLogged, posts.dislikePost);
 
   app.use("/api", router);
 }
