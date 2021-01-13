@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 import cloudinary from "config/cloudinary.config";
 import Posts from "models/posts.model";
+import Users from "models/users.model";
 import path from "path";
 import { removeFiles } from "helpers/assistant.helpers";
 class Post {
@@ -141,6 +142,51 @@ class Post {
       } else {
         return res.json({ success: false, message: "Already published" });
       }
+    } catch (error) {
+      return res.json({ success: false, error });
+    }
+  }
+
+  public async getPostsHome(req: Request, res: Response): Promise<Response> {
+    const { id, limit } = req.body;
+    try {
+      const followedUsers: any = await Users.findById(id, "following");
+
+      const posts: any = await Posts.find({ userId: { $in: followedUsers.following } })
+        .populate("userId", "avatar firstName lastName")
+        .populate("republishedUserId", "avatar firstName lastName")
+        .sort({
+          createdAt: -1,
+        })
+        .limit(parseInt(limit));
+
+      let hasMore: Boolean = true;
+
+      if (posts.length < limit) {
+        hasMore = false;
+      }
+
+      return res.json({ success: true, posts, hasMore });
+    } catch (error) {
+      return res.json({ success: false, error });
+    }
+  }
+
+  public async likePost(req: Request, res: Response): Promise<Response> {
+    const { postId, userId } = req.body;
+    try {
+      const post = await Posts.findOneAndUpdate({ _id: postId }, { $push: { likesList: userId } });
+      return res.json({ success: true, post });
+    } catch (error) {
+      return res.json({ success: false, error });
+    }
+  }
+
+  public async dislikePost(req: Request, res: Response): Promise<Response> {
+    const { postId, userId } = req.body;
+    try {
+      const post = await Posts.findOneAndUpdate({ _id: postId }, { $pull: { likesList: userId } });
+      return res.json({ success: true, post });
     } catch (error) {
       return res.json({ success: false, error });
     }

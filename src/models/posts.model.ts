@@ -4,7 +4,7 @@ const postsSchema = new Schema(
   {
     userId: {
       type: Schema.Types.ObjectId,
-      res: "users",
+      ref: "users",
     },
     bodyContent: {
       type: String,
