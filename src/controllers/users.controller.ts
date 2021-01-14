@@ -440,7 +440,6 @@ class User {
   public async updateProfilePhoto(req: Request, res: Response): Promise<Response> {
     const decoded = (<any>req)["decoded"];
     try {
-      console.log(req.file);
       if (req.file.size > 1000000) {
         removeFile(req.file.path);
         return res.json({ success: false, message: "File too large" });
