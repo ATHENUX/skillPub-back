@@ -1,0 +1,27 @@
+{
+  "files": {
+    "main.css": "/static/css/main.a799141a.chunk.css",
+    "main.js": "/static/js/main.34dc1233.chunk.js",
+    "main.js.map": "/static/js/main.34dc1233.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.bed7fd09.js",
+    "runtime-main.js.map": "/static/js/runtime-main.bed7fd09.js.map",
+    "static/css/2.b25828e3.chunk.css": "/static/css/2.b25828e3.chunk.css",
+    "static/js/2.6e020af5.chunk.js": "/static/js/2.6e020af5.chunk.js",
+    "static/js/2.6e020af5.chunk.js.map": "/static/js/2.6e020af5.chunk.js.map",
+    "static/js/3.218a091f.chunk.js": "/static/js/3.218a091f.chunk.js",
+    "static/js/3.218a091f.chunk.js.map": "/static/js/3.218a091f.chunk.js.map",
+    "index.html": "/index.html",
+    "static/css/2.b25828e3.chunk.css.map": "/static/css/2.b25828e3.chunk.css.map",
+    "static/css/main.a799141a.chunk.css.map": "/static/css/main.a799141a.chunk.css.map",
+    "static/js/2.6e020af5.chunk.js.LICENSE.txt": "/static/js/2.6e020af5.chunk.js.LICENSE.txt",
+    "static/media/facebook.db22d166.svg": "/static/media/facebook.db22d166.svg",
+    "static/media/google.92b8040a.svg": "/static/media/google.92b8040a.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.bed7fd09.js",
+    "static/css/2.b25828e3.chunk.css",
+    "static/js/2.6e020af5.chunk.js",
+    "static/css/main.a799141a.chunk.css",
+    "static/js/main.34dc1233.chunk.js"
+  ]
+}
