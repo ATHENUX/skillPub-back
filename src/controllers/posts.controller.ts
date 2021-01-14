@@ -106,11 +106,18 @@ class Post {
     const { id, limit } = req.body;
     try {
       const posts = await Posts.find({ userId: id })
-        .populate("republishedUserId")
+        .populate("userId", "avatar firstName lastName")
+        .populate("republishedUserId", "avatar firstName lastName")
         .sort({ createdAt: -1 })
         .limit(limit);
 
-      return res.json({ success: true, posts });
+      let hasMore: Boolean = true;
+
+      if (posts.length < limit) {
+        hasMore = false;
+      }
+
+      return res.json({ success: true, posts, hasMore });
     } catch (error) {
       return res.json({ success: false, error });
     }
