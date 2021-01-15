@@ -18,6 +18,9 @@ const usersSchema = new Schema(
     avatar: {
       type: String,
     },
+    publicIdCloud: {
+      type: String,
+    },
     banner: {
       type: String,
     },

@@ -21,7 +21,7 @@ class Post {
         let fileToLarge: Boolean = false;
 
         for (const file of (<any>req).files) {
-          if (file.size > 1000000) {
+          if (file.size > 3000000) {
             fileToLarge = true;
             break;
           }
