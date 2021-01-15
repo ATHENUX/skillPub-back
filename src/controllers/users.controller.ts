@@ -451,17 +451,19 @@ class User {
       }
       const user: any = await Users.findById(decoded);
       let publicId: any;
+      let publicUrl: any;
       if (user.avatar === undefined || user.avatar === null) {
         await cloudinary.uploader.upload(
           req.file.path,
           { upload_preset: "dev_setups" },
           (err: any, result: any) => {
             publicId = result.public_id;
+            publicUrl = result.url;
           }
         );
         const userUpdated = await Users.findOneAndUpdate(
           { _id: decoded },
-          { avatar: publicId },
+          { avatar: publicUrl, publicIdCloud: publicId },
           { new: true }
         );
         removeFile(req.file.path);
@@ -469,7 +471,7 @@ class User {
       } else {
         if (user.avatar.includes("development/")) {
           const cloudRes = await cloudinary.uploader.destroy(
-            user.avatar,
+            user.publicIdCloud,
             (error: any, result: any) => {
               console.log(result, error);
             }
@@ -480,11 +482,12 @@ class User {
               { upload_preset: "dev_setups" },
               (err: any, result: any) => {
                 publicId = result.public_id;
+                publicUrl = result.url;
               }
             );
             const userUpdated = await Users.findOneAndUpdate(
               { _id: decoded },
-              { banner: publicId },
+              { avatar: publicUrl, publicIdCloud: publicId },
               { new: true }
             );
             removeFile(req.file.path);
